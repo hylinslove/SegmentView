@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="SegmentView">
+        <attr name="inColor" format="color|reference"/>
+        <attr name="textColor" format="color|reference"/>
+        <attr name="titleTextSize" format="dimension|reference"/>
+        <attr name="strokeSize" format="dimension|reference"/>
+        <attr name="title1" format="string|reference"/>
+        <attr name="title2" format="string|reference"/>
+    </declare-styleable>
+</resources>
