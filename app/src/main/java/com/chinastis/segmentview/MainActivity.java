@@ -9,15 +9,12 @@ import com.chinastis.segmentview.widget.SegmentView;
 
 public class MainActivity extends AppCompatActivity {
 
-    private SegmentView segmentView;
-    int num;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        segmentView = (SegmentView) findViewById(R.id.segment_main);
+        SegmentView segmentView = (SegmentView) findViewById(R.id.segment_main);
 
         segmentView.setOnSegmentChangeListener(new SegmentView.OnSegmentChangeListener() {
             @Override

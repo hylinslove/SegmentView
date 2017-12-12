@@ -1,10 +1,10 @@
-apply plugin: 'com.android.application'
+apply plugin: 'com.android.library'
 
 android {
     compileSdkVersion 22
     buildToolsVersion "24.0.2"
     defaultConfig {
-        applicationId "com.chinastis.segmentview"
+
         minSdkVersion 15
         targetSdkVersion 22
         versionCode 1
