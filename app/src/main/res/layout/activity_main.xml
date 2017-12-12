@@ -7,14 +7,13 @@
     tools:context="com.chinastis.segmentview.MainActivity">
 
     <com.chinastis.segmentview.widget.SegmentView
+        android:id="@+id/segment_main"
         android:layout_width="100dp"
         android:layout_height="80dp"
         android:layout_centerInParent="true"
         app:inColor="#000000"
         app:titleTextSize="16dp"
         app:textColor="#ffffff"
-        app:title1="哈哈"
-        app:title2="呵呵"
         />
 
 </RelativeLayout>

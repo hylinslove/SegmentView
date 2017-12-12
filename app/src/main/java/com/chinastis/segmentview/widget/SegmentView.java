@@ -1,5 +1,6 @@
 package com.chinastis.segmentview.widget;
 
+import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
@@ -8,7 +9,6 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -36,6 +36,7 @@ public class SegmentView extends View{
 
     private Paint paint;
     private boolean isFirstSelect = true;
+    private OnSegmentChangeListener onSegmentChangeListener;
 
     public SegmentView(Context context) {
         super(context);
@@ -45,7 +46,7 @@ public class SegmentView extends View{
         super(context, attrs);
         TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SegmentView);
 
-        inColor = ta.getColor(R.styleable.SegmentView_inColor,Color.BLUE);
+        inColor = ta.getColor(R.styleable.SegmentView_inColor,Color.GREEN);
         textColor = ta.getColor(R.styleable.SegmentView_textColor,Color.WHITE);
         textSize = ta.getDimension(R.styleable.SegmentView_titleTextSize,40);
         strokeSize = ta.getDimension(R.styleable.SegmentView_strokeSize,6);
@@ -101,7 +102,6 @@ public class SegmentView extends View{
         } else {
             height = 160;
         }
-
         setMeasuredDimension((int)width,(int)height);
     }
 
@@ -111,39 +111,40 @@ public class SegmentView extends View{
         if(event.getX()>=width/2 && isFirstSelect) {
             isFirstSelect = false;
             invalidate();
+            if(onSegmentChangeListener!=null) {
+                onSegmentChangeListener.segmentChanged(this,1);
+            }
 
         } else if (event.getX()<=width/2 && !isFirstSelect){
             isFirstSelect = true;
             invalidate();
+            if(onSegmentChangeListener!=null) {
+                onSegmentChangeListener.segmentChanged(this,0);
+            }
 
         }
-
         return super.onTouchEvent(event);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onDraw(Canvas canvas) {
-
         if(isFirstSelect) {
-            //圆角半径
             float r = height/4;
 
             paint.setStrokeWidth(0);
             paint.setColor(inColor);
             paint.setStyle(Paint.Style.FILL);
 
-            //两个圆角（选中部分）
             canvas.drawArc(0,0,r,r,180,90,true,paint);
             canvas.drawArc(0,height-r,r,height,90,90,true,paint);
-            //填充内容（选中部分）
+
             canvas.drawRect(0,r/2,r/2,height-(r/2),paint);
             canvas.drawRect(r/2,0,width/2,height,paint);
 
-            //选中文字（选中部分）
             paint.setColor(textColor);
             paint.setTextSize(textSize);
-            //文字居中处理
+
             paint.setTextAlign(Paint.Align.CENTER);
             Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
             int baseline = (int) ((height - fontMetrics.bottom - fontMetrics.top) / 2);
@@ -152,11 +153,11 @@ public class SegmentView extends View{
             paint.setColor(inColor);
             paint.setStrokeWidth(strokeSize);
             paint.setStyle(Paint.Style.STROKE);
-            //两个圆角（选中部分）
+
             float padding = paint.getStrokeWidth()/2;
             canvas.drawArc(width-r+padding,padding,width-padding,r-padding,-94,96,false,paint);
             canvas.drawArc(width-r+padding,height-r+padding,width-padding,height-padding,-4,96,false,paint);
-            //填充内容（选中部分）
+
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRect(width/2,0,width-(r/2),paint.getStrokeWidth(),paint);
             canvas.drawRect(width/2,height-paint.getStrokeWidth(),width-(r/2),height,paint);
@@ -169,32 +170,27 @@ public class SegmentView extends View{
 
             canvas.drawText(title2,width/4*3,baseline,paint);
         } else {
-            //圆角半径
             float r = height/4;
             paint.setStrokeWidth(strokeSize);
             paint.setStyle(Paint.Style.STROKE);
             paint.setColor(inColor);
             float padding = paint.getStrokeWidth()/2;
 
-            //两个圆角（未选中部分）
             canvas.drawArc(padding,padding,r-padding,r-padding,176,96,false,paint);
             canvas.drawArc(padding,height-r+padding,r-padding,height-padding,86,96,false,paint);
-            //填充内容（未选中部分）
+
             paint.setStyle(Paint.Style.FILL);
             canvas.drawRect(r/2,0,width/2,padding*2,paint);
             canvas.drawRect(r/2,height-(padding*2),width/2,height,paint);
             canvas.drawRect(0,r/2,padding*2,height-(r/2),paint);
 
-            //选中文字（选中部分）
             paint.setTextSize(textSize);
-            //文字居中处理
+
             paint.setTextAlign(Paint.Align.CENTER);
             Paint.FontMetricsInt fontMetrics = paint.getFontMetricsInt();
             int baseline = (int) ((height - fontMetrics.bottom - fontMetrics.top) / 2);
             canvas.drawText(title1,width/4,baseline,paint);
 
-
-            //圆角
             paint.setStrokeWidth(0);
             paint.setColor(inColor);
             paint.setStyle(Paint.Style.FILL);
@@ -208,5 +204,14 @@ public class SegmentView extends View{
             canvas.drawText(title2,width/4*3,baseline,paint);
         }
 
+    }
+
+
+    public interface OnSegmentChangeListener {
+        void segmentChanged(View view,int index);
+    }
+
+    public void setOnSegmentChangeListener (OnSegmentChangeListener listener) {
+        this.onSegmentChangeListener = listener;
     }
 }
