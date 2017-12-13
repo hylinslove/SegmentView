@@ -9,6 +9,7 @@ import android.graphics.Paint;
 import android.graphics.RectF;
 import android.os.Build;
 import android.support.annotation.Nullable;
+import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -37,6 +38,8 @@ public class SegmentView extends View{
     private Paint paint;
     private boolean isFirstSelect = true;
     private OnSegmentChangeListener onSegmentChangeListener;
+
+    private ViewPager viewPager;
 
     public SegmentView(Context context) {
         super(context);
@@ -109,17 +112,21 @@ public class SegmentView extends View{
     public boolean onTouchEvent(MotionEvent event) {
 
         if(event.getX()>=width/2 && isFirstSelect) {
-            isFirstSelect = false;
-            invalidate();
+            setSecondPage();
             if(onSegmentChangeListener!=null) {
                 onSegmentChangeListener.segmentChanged(this,1);
             }
+            if(viewPager != null) {
+                viewPager.setCurrentItem(1);
+            }
 
         } else if (event.getX()<=width/2 && !isFirstSelect){
-            isFirstSelect = true;
-            invalidate();
+            setFirstPage();
             if(onSegmentChangeListener!=null) {
                 onSegmentChangeListener.segmentChanged(this,0);
+            }
+            if(viewPager != null) {
+                viewPager.setCurrentItem(0);
             }
 
         }
@@ -206,6 +213,9 @@ public class SegmentView extends View{
 
     }
 
+    public void startWithViewPager(ViewPager viewPager){
+        this.viewPager = viewPager;
+    }
 
     public interface OnSegmentChangeListener {
         void segmentChanged(View view,int index);
@@ -213,5 +223,14 @@ public class SegmentView extends View{
 
     public void setOnSegmentChangeListener (OnSegmentChangeListener listener) {
         this.onSegmentChangeListener = listener;
+    }
+
+    public void setFirstPage() {
+        isFirstSelect = true;
+        invalidate();
+    }
+    public void setSecondPage() {
+        isFirstSelect = false;
+        invalidate();
     }
 }
